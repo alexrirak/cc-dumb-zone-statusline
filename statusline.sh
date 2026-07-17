@@ -15,7 +15,7 @@ GOLD='\033[38;5;222m'; BURN='\033[38;5;220m'; LAV='\033[38;5;189m'
 GRAY='\033[38;5;245m'; DIM='\033[2m'; RESET='\033[0m'
 
 IFS=$'\t' read -r WINDOW T_DRIFT T_DUMB ZONE_COLOR ZONE_LABEL \
-  <<< "$(classify_zone "$MODEL_ID" "$MODEL" "$CTX_TOKENS")"
+  <<< "$(classify_zone "$MODEL_ID" "$MODEL" "$CTX_TOKENS" "$WINDOW")"
 
 CTX_COLOR="$ZONE_COLOR"
 

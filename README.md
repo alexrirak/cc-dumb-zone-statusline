@@ -225,14 +225,14 @@ If you'd rather not pipe `curl` into `bash`, you can install by hand:
 
 ## Model thresholds
 
-The script reads `model.id` and `model.display_name` from Claude Code's statusline input and picks thresholds accordingly:
+The window size itself comes straight from Claude Code's `context_window.context_window_size` hook field. `model.id` / `model.display_name` are only used to pick the drift/dumb thresholds:
 
-| Model family                  | Window | Drift @ | Dumb @  |
-|-------------------------------|-------:|--------:|--------:|
-| Anything with `[1m]` / `1m`   | 1,000k |    200k |    400k |
-| Opus                          |   200k |    120k |    160k |
-| Haiku                         |   200k |     60k |    100k |
-| Other (Sonnet, fallback)      |   200k |     80k |    120k |
+| Model family              | Window (from hook data) | Drift @ | Dumb @ |
+|---------------------------|-------------------------|---------|--------|
+| Anything with a 1M window | 1,000k                  | 200k    | 400k   |
+| Opus                      | 200k                    | 120k    | 160k   |
+| Haiku                     | 200k                    | 60k     | 100k   |
+| Other (Sonnet, fallback)  | 200k                    | 80k     | 120k   |
 
 These are opinionated defaults — `dictionary-of-ai-coding` anchors the discussion around ~100k for "frontier models" but acknowledges the exact line moves with model and task. Tune to taste; see [Customizing](#customizing).
 

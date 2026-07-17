@@ -264,6 +264,7 @@ if [ -z "$FIXTURE_PATH" ]; then
   "workspace": {"current_dir": "/tmp"},
   "cwd": "/tmp",
   "context_window": {
+    "context_window_size": 1000000,
     "used_percentage": 12.5,
     "current_usage": {"input_tokens": 5000, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0},
     "total_input_tokens": 50000,

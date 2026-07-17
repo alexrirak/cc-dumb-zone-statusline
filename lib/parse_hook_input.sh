@@ -9,6 +9,7 @@ parse_hook_input() {
     "TRANSCRIPT="     + (.transcript_path // "" | @sh),
     "CWD_REAL="       + (.workspace.current_dir // .cwd // "" | @sh),
     "CTX_PCT="        + ((.context_window.used_percentage // 0) | floor | tostring),
+    "WINDOW="         + ((.context_window.context_window_size // 200000) | if type == "number" then floor else 200000 end | tostring),
     "CTX_TOKENS="     + (((.context_window.current_usage.input_tokens // 0)
                         + (.context_window.current_usage.cache_creation_input_tokens // 0)
                         + (.context_window.current_usage.cache_read_input_tokens // 0)) | tostring),
