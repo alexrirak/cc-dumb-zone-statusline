@@ -31,6 +31,22 @@ fmt_tokens() {
 
 CTX_FMT=$(fmt_tokens "$CTX_TOKENS")
 
+# ---- rate-limit helpers ----
+pct_color() {
+  if   [ "$1" -ge 80 ]; then printf '%s' "$RED"
+  elif [ "$1" -ge 50 ]; then printf '%s' "$YELLOW"
+  else                       printf '%s' "$GREEN"; fi
+}
+
+fmt_until() {
+  local left=$(( $1 - $(date +%s) )) d h m
+  if [ "$left" -le 0 ]; then echo "now"; return; fi
+  d=$(( left / 86400 )); h=$(( (left % 86400) / 3600 )); m=$(( (left % 3600) / 60 ))
+  if   [ "$d" -gt 0 ]; then echo "${d}d${h}h"
+  elif [ "$h" -gt 0 ]; then echo "${h}h${m}m"
+  else                      echo "${m}m"; fi
+}
+
 # ---- segmented progress bar (20 chars, 4-shade gradient) ----
 # █ used  │  ░ safe headroom  │  ▒ approaching dumb  │  ▓ past dumb threshold
 # density rises with risk: used (solid) → safe (light) → warning → degraded
@@ -104,5 +120,18 @@ LINE2="${LINE2}  🤖 ${PURPLE}${MODEL}${RESET}"
 LINE3="💰 ${GOLD}\$${COST_FMT}${RESET}"
 [ -n "$BURN_RATE" ] && LINE3="${LINE3} ${DIM}(${RESET}${BURN}\$${BURN_RATE}/h${RESET}${DIM})${RESET}"
 [ -n "$TPM" ]       && LINE3="${LINE3}  📊 ${LAV}${TPM} tpm${RESET}"
+
+# ---- subscription rate limits (absent for API-key users / before first response) ----
+RL_SEG=""
+add_usage() {
+  local icon=$1 label=$2 pct=$3 reset=$4 c
+  [[ "$pct" =~ ^[0-9]+$ ]] || return
+  c=$(pct_color "$pct")
+  RL_SEG="${RL_SEG}  ${icon} ${GRAY}${label}${RESET} ${c}${pct}%${RESET}"
+  [ "$reset" -gt 0 ] 2>/dev/null && RL_SEG="${RL_SEG} ${DIM}·$(fmt_until "$reset")${RESET}"
+}
+add_usage "🕐" "5h" "$RL_5H_PCT" "$RL_5H_RESET"
+add_usage "📆" "7d" "$RL_7D_PCT" "$RL_7D_RESET"
+LINE3="${LINE3}${RL_SEG}"
 
 render_lines

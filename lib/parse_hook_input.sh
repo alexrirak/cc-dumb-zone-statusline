@@ -17,7 +17,11 @@ parse_hook_input() {
     "OUT_TOKENS="     + (.context_window.total_output_tokens // 0 | tostring),
     "CACHED_TOKENS="  + (.context_window.current_usage.cache_read_input_tokens // 0 | tostring),
     "COST_USD="       + (.cost.total_cost_usd // 0 | tostring),
-    "DURATION_MS="    + (.cost.total_duration_ms // 0 | tostring)
+    "DURATION_MS="    + (.cost.total_duration_ms // 0 | tostring),
+    "RL_5H_PCT="      + ((.rate_limits.five_hour.used_percentage // .rate_limits.five_hour.utilization // -1) | floor | tostring),
+    "RL_5H_RESET="    + ((.rate_limits.five_hour.resets_at // 0) | floor | tostring),
+    "RL_7D_PCT="      + ((.rate_limits.seven_day.used_percentage // .rate_limits.seven_day.utilization // -1) | floor | tostring),
+    "RL_7D_RESET="    + ((.rate_limits.seven_day.resets_at // 0) | floor | tostring)
   ')"
   CWD=$(basename "$CWD_REAL")
   TOTAL_IO=$((IN_TOKENS + OUT_TOKENS))
